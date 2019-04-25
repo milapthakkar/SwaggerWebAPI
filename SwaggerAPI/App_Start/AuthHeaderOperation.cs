@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Web.Http.Filters;
 
 namespace SwaggerAPI.App_Start
 {
@@ -13,6 +14,7 @@ namespace SwaggerAPI.App_Start
     /// </summary>
     public class AuthHeaderOperation : IOperationFilter
     {
+
         /// <summary>
         /// Applies the operation filter.
         /// </summary>
@@ -27,23 +29,8 @@ namespace SwaggerAPI.App_Start
             {
                 operation.parameters = new List<Parameter>();
             }
-            //var attrs = apiDescription.ActionDescriptor.GetCustomAttributes<AuthorizeAttribute>();
-            //foreach (var attr in attrs)
-            //{
-            //    //if (attr.GetType() == typeof(AuthorizeAttribute))
-            //    //{
-            //        operation.parameters.Add(new Parameter
-            //        {
-            //            description = "access token",
-            //            @in = "header",
-            //            name = "Authorization",
-            //            required = true,
-            //            type = "string"
-            //        });
-            //    //}
-            //}
 
-            var parameter = new Parameter
+            /*var parameter = new Parameter
             {
                 description = "access token",
                 @in = "header",
@@ -57,7 +44,23 @@ namespace SwaggerAPI.App_Start
                 parameter.required = false;
             }
 
-            operation.parameters.Add(parameter);
+            operation.parameters.Add(parameter);*/
+
+            var filterPipeline = apiDescription.ActionDescriptor.GetFilterPipeline();
+            var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Instance).Any(filter => filter is IAuthorizationFilter);
+            var authorizationRequired = apiDescription.GetControllerAndActionAttributes<AuthorizeAttribute>().Any();
+
+            if (isAuthorized && authorizationRequired)
+            {
+                operation.parameters.Add(new Parameter
+                {
+                    name = "Authorization Token",
+                    @in = "header",
+                    description = "access token",
+                    required = true,
+                    type = "string"
+                });
+            }
 
 
         }
