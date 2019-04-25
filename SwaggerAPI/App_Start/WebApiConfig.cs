@@ -9,11 +9,11 @@ using Swashbuckle.Application;
 
 namespace SwaggerAPI
 {
-    //https://stackoverflow.com/questions/37724666/how-to-redirect-from-root-url-to-swagger-ui-index
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
+            config.EnableCors(); // To Enable Cors
             // Web API configuration and services
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();

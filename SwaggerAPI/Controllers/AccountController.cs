@@ -52,17 +52,26 @@ namespace SwaggerAPI.Controllers
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
         // GET api/Account/UserInfo
+        /// <summary>
+        /// Get User Details
+        /// </summary>
+        /// <returns>Retrive Logged-In User Details</returns>
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
         public UserInfoViewModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
+            var user = UserManager.FindByName(User.Identity.Name); // added to retrive additional fields
+            
             return new UserInfoViewModel
             {
-                Email = User.Identity.GetUserName(),
+                Email = user.Email, //User.Identity.GetUserName(),
                 HasRegistered = externalLogin == null,
-                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
+                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null,
+
+                //Additional Fields
+                FirstName = user.FirstName,
+                LastName= user.LastName
             };
         }
 
@@ -115,6 +124,11 @@ namespace SwaggerAPI.Controllers
         }
 
         // POST api/Account/ChangePassword
+        /// <summary>
+        /// Change Password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [Route("ChangePassword")]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
@@ -135,6 +149,11 @@ namespace SwaggerAPI.Controllers
         }
 
         // POST api/Account/SetPassword
+        /// <summary>
+        /// Set New Password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Set New Password</returns>
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
         {
@@ -319,6 +338,13 @@ namespace SwaggerAPI.Controllers
         }
 
         // POST api/Account/Register
+        /// <summary>
+        /// Create User
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>
+        /// New user created
+        /// </returns>
         [AllowAnonymous]
         [Route("Register")]
         public async Task<IHttpActionResult> Register(RegisterBindingModel model)
@@ -328,13 +354,17 @@ namespace SwaggerAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email,FirstName = model.FirstName,LastName=model.LastName };            
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
+            }
+            else
+            {
+                //send email
             }
 
             return Ok();

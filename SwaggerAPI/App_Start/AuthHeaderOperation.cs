@@ -28,37 +28,25 @@ namespace SwaggerAPI.App_Start
             if (operation.parameters == null)
             {
                 operation.parameters = new List<Parameter>();
-            }
-
-            /*var parameter = new Parameter
-            {
-                description = "access token",
-                @in = "header",
-                name = "Authorization",
-                required = true,
-                type = "string"
-            };
-
-            if (apiDescription.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any())
-            {
-                parameter.required = false;
-            }
-
-            operation.parameters.Add(parameter);*/
+            }            
 
             var filterPipeline = apiDescription.ActionDescriptor.GetFilterPipeline();
-            var isAuthorized = filterPipeline.Select(filterInfo => filterInfo.Instance).Any(filter => filter is IAuthorizationFilter);
-            var authorizationRequired = apiDescription.GetControllerAndActionAttributes<AuthorizeAttribute>().Any();
+            var isAuthorized = filterPipeline
+                                             .Select(filterInfo => filterInfo.Instance)
+                                             .Any(filter => filter is IAuthorizationFilter);
 
-            if (isAuthorized && authorizationRequired)
+            var allowAnonymous = apiDescription.ActionDescriptor.GetCustomAttributes<AllowAnonymousAttribute>().Any();
+
+            if (isAuthorized && !allowAnonymous)
             {
                 operation.parameters.Add(new Parameter
                 {
-                    name = "Authorization Token",
+                    name = "Authorization",
                     @in = "header",
                     description = "access token",
                     required = true,
-                    type = "string"
+                    type = "string",
+                    @default= "bearer "
                 });
             }
 
