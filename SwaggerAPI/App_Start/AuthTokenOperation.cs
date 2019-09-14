@@ -41,14 +41,16 @@ namespace SwaggerAPI.App_Start
                             type = "string",
                             name = "username",
                             required = true,
-                            @in = "formData"
+                            @in = "formData",
+                            @default="admin@admin.com"
                         },
                         new Parameter
                         {
                             type = "string",
                             name = "password",
                             required = true,
-                            @in = "formData"
+                            @in = "formData",
+                            @default="Admin@123"
                         },
                     }
                 }

@@ -19,7 +19,7 @@ namespace SwaggerAPI
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
-            // Web API routes
+            // Web API routes // To Enable Attribute Routing
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
@@ -28,7 +28,7 @@ namespace SwaggerAPI
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            // Redirect root to Swagger UI
+            // Redirect to Swagger UI when application run
             config.Routes.MapHttpRoute(
                 name: "Swagger UI",
                 routeTemplate: "",

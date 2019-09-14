@@ -1,6 +1,9 @@
 # Swagger Integration in Web API  
 Swagger Integration in Asp.net Web API using Identity 
 
+# To Create a Web API 
+https://developer.okta.com/blog/2018/07/27/build-crud-app-in-aspnet-framework-webapi-and-angular
+
 # Enable Cors 
 To Enable cors 
 PM> Install-Package Microsoft.AspNet.WebApi.Cors
@@ -20,3 +23,4 @@ Check your AspNetUsers db table to be sure the properties were added correctly
 
 # For Role Based Authentication
 http://johnatten.com/2014/10/26/asp-net-web-api-and-identity-2-0-customizing-identity-models-and-implementing-role-based-authorization/#Adding-Role-Based-Authorization-to-the-Web-Api-Application
+
